@@ -82,10 +82,10 @@ def display_hand(d, p, show_dealer_hand):
         display_cards([BACKSIDE] + d[1:])
         
     #show player's hand
-    print('Player:', get_hand_value(p))
+    #print('Player:', get_hand_value(p))
     display_cards(p)
     
-def display_cards():
+def display_cards(hand):
     ...
     
 def get_hand_value(hand):
