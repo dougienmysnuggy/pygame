@@ -30,6 +30,7 @@ clock = pygame.time.Clock()
 pygame.display.set_caption('Blackjack')
 font = pygame.font.Font('C:\\WINDOWS\\FONTS\\ARIALBD.TTF', 32)
 dt = 0
+BACKSIDE = 'backside'
 
 
 def main():
@@ -85,6 +86,9 @@ def display_hand(d, p, show_dealer_hand):
     display_cards(p)
     
 def display_cards():
+    ...
+    
+def get_hand_value(hand):
     ...
     
 if __name__ == '__main__':
