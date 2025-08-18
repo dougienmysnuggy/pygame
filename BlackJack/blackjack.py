@@ -1,26 +1,3 @@
-'''
-Trying a blackjack game using pygame
-'''
-
-'''
-- Draw background
-- deal cards
-    dealer cards at top of screen
-    player cards at bottom
-- player turn
-    draw hit, stand, double, split buttons
-    get input from user
-    draw card, evaluate, keep getting user input until stand or bust
-    each hit deals 1 new card and draws it on screen
-- if no bust, dealer turn
-    reveal face down card
-    if <= 16 hit, else stand
-    evaluate, determine winner
-    if win, pay
-- rinse, repeat until user quits or money = 0
-'''
-
-
 import pygame
 from random import shuffle
 import time
@@ -29,7 +6,7 @@ pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Blackjack')
-font = pygame.font.Font('C:\\WINDOWS\\FONTS\\ARIALBD.TTF', 32)
+#font = pygame.font.Font('C:\\WINDOWS\\FONTS\\ARIALBD.TTF', 32)
 dt = 0
 BACKSIDE = 'backside'
 CARD_SCALE = 0.25
@@ -59,8 +36,6 @@ def main():
         display_hand(dealer_hand, player_hand, False)
 
         # get player action until he stands or busts
-        while True:
-
 
         time.sleep(20)
         dt = clock.tick(60) / 1000
@@ -106,7 +81,7 @@ def display_cards(hand, turn):
         else:
             player_hand = False
         #build file name
-        if card != 'BACKSIDE':
+        if card != 'BACKSIDE' and card != 'backside':
             if card[0] == 'J':
                 rank = 'jack'
             elif card[0] == 'Q':
@@ -127,9 +102,9 @@ def display_cards(hand, turn):
             elif card[1] == 'd':
                 suit = 'diamonds'
             
-            filename = 'blackjack\\assets\\' + rank + '_of_' + suit + '.png' 
+            filename = 'assets/' + rank + '_of_' + suit + '.png' 
         else:
-            filename = 'blackjack\\assets\\backside.png'
+            filename = 'assets/backside.png'
                        
         if player_hand:
             y_pos = 565
