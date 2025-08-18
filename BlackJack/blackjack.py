@@ -23,6 +23,7 @@ Trying a blackjack game using pygame
 
 import pygame
 from random import shuffle
+import time
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -31,6 +32,7 @@ pygame.display.set_caption('Blackjack')
 font = pygame.font.Font('C:\\WINDOWS\\FONTS\\ARIALBD.TTF', 32)
 dt = 0
 BACKSIDE = 'backside'
+CARD_SCALE = 0.25
 
 
 def main():
@@ -55,7 +57,7 @@ def main():
         player_hand.append(deck.pop())
         dealer_hand.append(deck.pop())
         display_hand(dealer_hand, player_hand, False)
-        
+        time.sleep(20)
         dt = clock.tick(60) / 1000
 
     pygame.quit() 
@@ -72,22 +74,68 @@ def build_deck():
 
 def display_hand(d, p, show_dealer_hand):
     #show dealer's hand
-    if show_dealer_hand:
+    #if show_dealer_hand:
         #show both cards
         #update score
-        display_cards(d)
-    else:
+    display_cards(d, 'dealer')
+    #else:
         #2nd card is face down
         #update score, but dealer = ???
-        display_cards([BACKSIDE] + d[1:])
+    #    display_cards([BACKSIDE] + d[1:])
         
     #show player's hand
     #print('Player:', get_hand_value(p))
-    display_cards(p)
+    display_cards(p, 'player')
     
-def display_cards(hand):
-    ...
-    
+def display_cards(hand, turn):
+    '''
+    get filename
+    load img = filename
+    rect for img
+    show card image
+    '''
+    card_num = 1
+    for card in hand:
+        if turn == 'player':
+            player_hand = True
+        else:
+            player_hand = False
+        #build file name
+        if card[0] == 'J':
+            rank = 'jack'
+        elif card[0] == 'Q':
+            rank = 'queen'
+        elif card[0] == 'K':
+            rank = 'king'
+        elif card[0] == 'A':
+            rank = 'ace'  
+        else:
+            rank = str(card[0])
+        
+        if card[1] == 'c':
+            suit = 'clubs'
+        elif card[1] == 's':
+            suit = 'spades'
+        elif card[1] == 'h':
+            suit = 'hearts'
+        elif card[1] == 'd':
+            suit = 'diamonds'
+        if player_hand:
+            y_pos = 565
+        else:
+            y_pos = 100
+            
+        filename = 'blackjack\\assets\\' + rank + '_of_' + suit + '.png'
+        card_img = pygame.image.load(filename).convert_alpha()
+        new_width = card_img.get_width() * CARD_SCALE
+        new_height = card_img.get_width() * CARD_SCALE
+        card_img = pygame.transform.scale(card_img, (int(new_width), int(new_height)))
+        image_rect = card_img.get_rect()
+        image_rect.center = (365 + image_rect.width * card_num, y_pos)
+        card_num += 1       
+        screen.blit(card_img, image_rect)
+        pygame.display.flip()
+
 def get_hand_value(hand):
     ...
     
