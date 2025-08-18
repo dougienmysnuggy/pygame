@@ -1,26 +1,3 @@
-'''
-Trying a blackjack game using pygame
-'''
-
-'''
-- Draw background
-- deal cards
-    dealer cards at top of screen
-    player cards at bottom
-- player turn
-    draw hit, stand, double, split buttons
-    get input from user
-    draw card, evaluate, keep getting user input until stand or bust
-    each hit deals 1 new card and draws it on screen
-- if no bust, dealer turn
-    reveal face down card
-    if <= 16 hit, else stand
-    evaluate, determine winner
-    if win, pay
-- rinse, repeat until user quits or money = 0
-'''
-
-
 import pygame
 from random import shuffle
 import time
@@ -29,7 +6,7 @@ pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 pygame.display.set_caption('Blackjack')
-font = pygame.font.Font('C:\\WINDOWS\\FONTS\\ARIALBD.TTF', 32)
+#font = pygame.font.Font('C:\\WINDOWS\\FONTS\\ARIALBD.TTF', 32)
 dt = 0
 BACKSIDE = 'backside'
 CARD_SCALE = 0.25
@@ -57,6 +34,9 @@ def main():
         player_hand.append(deck.pop())
         dealer_hand.append(deck.pop())
         display_hand(dealer_hand, player_hand, False)
+
+        # get player action until he stands or busts
+
         time.sleep(20)
         dt = clock.tick(60) / 1000
 
@@ -74,14 +54,14 @@ def build_deck():
 
 def display_hand(d, p, show_dealer_hand):
     #show dealer's hand
-    #if show_dealer_hand:
+    if show_dealer_hand:
         #show both cards
         #update score
-    display_cards(d, 'dealer')
-    #else:
+        display_cards(d, 'dealer')
+    else:
         #2nd card is face down
         #update score, but dealer = ???
-    #    display_cards([BACKSIDE] + d[1:])
+        display_cards([BACKSIDE] + d[1:], 'dealer')
         
     #show player's hand
     #print('Player:', get_hand_value(p))
@@ -101,31 +81,35 @@ def display_cards(hand, turn):
         else:
             player_hand = False
         #build file name
-        if card[0] == 'J':
-            rank = 'jack'
-        elif card[0] == 'Q':
-            rank = 'queen'
-        elif card[0] == 'K':
-            rank = 'king'
-        elif card[0] == 'A':
-            rank = 'ace'  
+        if card != 'BACKSIDE' and card != 'backside':
+            if card[0] == 'J':
+                rank = 'jack'
+            elif card[0] == 'Q':
+                rank = 'queen'
+            elif card[0] == 'K':
+                rank = 'king'
+            elif card[0] == 'A':
+                rank = 'ace'  
+            else:
+                rank = str(card[0])
+            
+            if card[1] == 'c':
+                suit = 'clubs'
+            elif card[1] == 's':
+                suit = 'spades'
+            elif card[1] == 'h':
+                suit = 'hearts'
+            elif card[1] == 'd':
+                suit = 'diamonds'
+            
+            filename = 'assets/' + rank + '_of_' + suit + '.png' 
         else:
-            rank = str(card[0])
-        
-        if card[1] == 'c':
-            suit = 'clubs'
-        elif card[1] == 's':
-            suit = 'spades'
-        elif card[1] == 'h':
-            suit = 'hearts'
-        elif card[1] == 'd':
-            suit = 'diamonds'
+            filename = 'assets/backside.png'
+                       
         if player_hand:
             y_pos = 565
         else:
             y_pos = 100
-            
-        filename = 'blackjack\\assets\\' + rank + '_of_' + suit + '.png'
         card_img = pygame.image.load(filename).convert_alpha()
         new_width = card_img.get_width() * CARD_SCALE
         new_height = card_img.get_width() * CARD_SCALE
