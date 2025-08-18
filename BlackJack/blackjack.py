@@ -57,6 +57,11 @@ def main():
         player_hand.append(deck.pop())
         dealer_hand.append(deck.pop())
         display_hand(dealer_hand, player_hand, False)
+
+        # get player action until he stands or busts
+        while True:
+
+
         time.sleep(20)
         dt = clock.tick(60) / 1000
 
@@ -74,14 +79,14 @@ def build_deck():
 
 def display_hand(d, p, show_dealer_hand):
     #show dealer's hand
-    #if show_dealer_hand:
+    if show_dealer_hand:
         #show both cards
         #update score
-    display_cards(d, 'dealer')
-    #else:
+        display_cards(d, 'dealer')
+    else:
         #2nd card is face down
         #update score, but dealer = ???
-    #    display_cards([BACKSIDE] + d[1:])
+        display_cards([BACKSIDE] + d[1:], 'dealer')
         
     #show player's hand
     #print('Player:', get_hand_value(p))
@@ -101,31 +106,35 @@ def display_cards(hand, turn):
         else:
             player_hand = False
         #build file name
-        if card[0] == 'J':
-            rank = 'jack'
-        elif card[0] == 'Q':
-            rank = 'queen'
-        elif card[0] == 'K':
-            rank = 'king'
-        elif card[0] == 'A':
-            rank = 'ace'  
+        if card != 'BACKSIDE':
+            if card[0] == 'J':
+                rank = 'jack'
+            elif card[0] == 'Q':
+                rank = 'queen'
+            elif card[0] == 'K':
+                rank = 'king'
+            elif card[0] == 'A':
+                rank = 'ace'  
+            else:
+                rank = str(card[0])
+            
+            if card[1] == 'c':
+                suit = 'clubs'
+            elif card[1] == 's':
+                suit = 'spades'
+            elif card[1] == 'h':
+                suit = 'hearts'
+            elif card[1] == 'd':
+                suit = 'diamonds'
+            
+            filename = 'blackjack\\assets\\' + rank + '_of_' + suit + '.png' 
         else:
-            rank = str(card[0])
-        
-        if card[1] == 'c':
-            suit = 'clubs'
-        elif card[1] == 's':
-            suit = 'spades'
-        elif card[1] == 'h':
-            suit = 'hearts'
-        elif card[1] == 'd':
-            suit = 'diamonds'
+            filename = 'blackjack\\assets\\backside.png'
+                       
         if player_hand:
             y_pos = 565
         else:
             y_pos = 100
-            
-        filename = 'blackjack\\assets\\' + rank + '_of_' + suit + '.png'
         card_img = pygame.image.load(filename).convert_alpha()
         new_width = card_img.get_width() * CARD_SCALE
         new_height = card_img.get_width() * CARD_SCALE
