@@ -47,16 +47,21 @@ def main():
         dealer_hand.append(deck.pop())
         display_hand(dealer_hand, player_hand, False)
 
-        # get player action until he stands or busts
-
         #draw buttons
-        pygame.draw.rect(screen, 'gray', hit_rect, 200)
-        pygame.draw.rect(screen, 'gray', stand_rect, 200)
-        pygame.draw.rect(screen, 'gray', double_rect, 200)
-        screen.blit(hit_text_surface, hit_text_rec)
-        screen.blit(stand_text_surface, stand_text_rec)
-        screen.blit(double_text_surface, double_text_rec)
-        pygame.display.flip()
+        draw_action_buttons()
+        
+        while True:
+            # player's turn
+            # wait for them to click a button
+            # determine which button was clicked
+            # evaluate between each hit
+            # go until we bust, stand, or double
+            
+            # dealer's turn
+            # if < 17, hit until >= 17
+            # evaluate between each hit
+            ...
+        
 
         time.sleep(20)
         dt = clock.tick(60)
@@ -123,9 +128,9 @@ def display_cards(hand, turn):
             elif card[1] == 'd':
                 suit = 'diamonds'
             
-            filename = 'pygame/Blackjack/assets/' + rank + '_of_' + suit + '.png' 
+            filename = 'Blackjack/assets/' + rank + '_of_' + suit + '.png' 
         else:
-            filename = 'pygame/Blackjack/assets/backside.png'
+            filename = 'Blackjack/assets/backside.png'
                        
         if player_hand:
             y_pos = 565
@@ -140,9 +145,39 @@ def display_cards(hand, turn):
         card_num += 1       
         screen.blit(card_img, image_rect)
         pygame.display.flip()
+        
+def draw_action_buttons():
+    pygame.draw.rect(screen, 'gray', hit_rect, 200)
+    pygame.draw.rect(screen, 'gray', stand_rect, 200)
+    pygame.draw.rect(screen, 'gray', double_rect, 200)
+    screen.blit(hit_text_surface, hit_text_rec)
+    screen.blit(stand_text_surface, stand_text_rec)
+    screen.blit(double_text_surface, double_text_rec)
+    pygame.display.flip()
 
 def get_hand_value(hand):
-    ...
+    # gets the value of the hand passed
+    
+    aces = 0 #check our aces later, they'll be 1 and then at the end we'll see if they can be 10
+    value = 0 #initialize hand value
+    
+    for card in hand:
+        rank = card[0]
+        if rank == 'A':
+            aces += 1
+        elif rank in ["J", "Q", "K"]:
+            value += 10
+        else:
+            value += int(rank)
+    
+    # now add 1 for each ace
+    value += aces
+    
+    for i in range(aces):
+        if value + 10 <= 21:
+            value += 10
+    
+    return value    
     
 if __name__ == '__main__':
     main()
