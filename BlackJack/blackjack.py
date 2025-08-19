@@ -11,6 +11,18 @@ dt = 0
 BACKSIDE = 'backside'
 CARD_SCALE = 0.25
 
+hit_rect = pygame.Rect(300, 250, 200, 50)
+stand_rect = pygame.Rect(550, 250, 200, 50)
+double_rect = pygame.Rect(800, 250, 200, 50)
+
+font = pygame.font.SysFont(None, 30)
+hit_text_surface = font.render('Hit', True, 'black')
+stand_text_surface = font.render('Stand', True, 'black')
+double_text_surface = font.render('Double', True, 'black')
+hit_text_rec = hit_text_surface.get_rect(center=hit_rect.center)
+stand_text_rec = stand_text_surface.get_rect(center=stand_rect.center)
+double_text_rec = double_text_surface.get_rect(center=double_rect.center)
+
 
 def main():
     running = True
@@ -37,8 +49,17 @@ def main():
 
         # get player action until he stands or busts
 
+        #draw buttons
+        pygame.draw.rect(screen, 'gray', hit_rect, 200)
+        pygame.draw.rect(screen, 'gray', stand_rect, 200)
+        pygame.draw.rect(screen, 'gray', double_rect, 200)
+        screen.blit(hit_text_surface, hit_text_rec)
+        screen.blit(stand_text_surface, stand_text_rec)
+        screen.blit(double_text_surface, double_text_rec)
+        pygame.display.flip()
+
         time.sleep(20)
-        dt = clock.tick(60) / 1000
+        dt = clock.tick(60)
 
     pygame.quit() 
     
@@ -102,9 +123,9 @@ def display_cards(hand, turn):
             elif card[1] == 'd':
                 suit = 'diamonds'
             
-            filename = 'assets/' + rank + '_of_' + suit + '.png' 
+            filename = 'pygame/Blackjack/assets/' + rank + '_of_' + suit + '.png' 
         else:
-            filename = 'assets/backside.png'
+            filename = 'pygame/Blackjack/assets/backside.png'
                        
         if player_hand:
             y_pos = 565
