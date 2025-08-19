@@ -46,11 +46,10 @@ def main():
         player_hand.append(deck.pop())
         dealer_hand.append(deck.pop())
         display_hand(dealer_hand, player_hand, False)
-
-        #draw buttons
-        draw_action_buttons()
-        
+       
         while True:
+            # show action buttons
+            draw_action_buttons()
             # player's turn
             # wait for them to click a button
             # determine which button was clicked
@@ -174,8 +173,10 @@ def get_hand_value(hand):
     value += aces
     
     for i in range(aces):
-        if value + 10 <= 21:
-            value += 10
+        if value + 11 <= 21:
+            value += 11
+        else:
+            value += 1
     
     return value    
     
