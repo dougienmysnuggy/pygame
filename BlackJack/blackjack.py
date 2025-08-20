@@ -4,16 +4,17 @@ import time
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
+fps = 60
 clock = pygame.time.Clock()
 pygame.display.set_caption('Blackjack')
 #font = pygame.font.Font('C:\\WINDOWS\\FONTS\\ARIALBD.TTF', 32)
-dt = 0
 BACKSIDE = 'backside'
 CARD_SCALE = 0.25
 
-hit_rect = pygame.Rect(300, 250, 200, 50)
-stand_rect = pygame.Rect(550, 250, 200, 50)
-double_rect = pygame.Rect(800, 250, 200, 50)
+
+hit_rect = pygame.Rect(10, 10, 150, 25)
+stand_rect = pygame.Rect(10, 40, 150, 25)
+double_rect = pygame.Rect(10, 70, 150, 25)
 
 font = pygame.font.SysFont(None, 30)
 hit_text_surface = font.render('Hit', True, 'black')
@@ -23,47 +24,76 @@ hit_text_rec = hit_text_surface.get_rect(center=hit_rect.center)
 stand_text_rec = stand_text_surface.get_rect(center=stand_rect.center)
 double_text_rec = double_text_surface.get_rect(center=double_rect.center)
 
+class Button:
+    def __init__(self, text, x_pos, y_pos, enabled):
+        self.text = text
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.enabled = enabled
+        self.draw()
+        
+    def draw(self):
+        button_text = font.render(self.text, True, 'black')
+        button_rect = pygame.rect.Rect((self.x_pos, self.y_pos), (150, 25))
+        pygame.draw.rect(screen, 'dark gray', button_rect, 0, 5)
+        pygame.draw.rect(screen, 'black', button_rect, 2, 5)
+        screen.blit(button_text, (self.x_pos + 3, self.y_pos + 3))
+        
+    def check_click(self):
+        mouse_pos = pygame.mouse.get_pos()
+        left_click = pygame.mouse.get_pressed()[0]
+        button_rect = pygame.rect.Rect((self.x_pos, self.y_pos), (150, 25))
+        if left_click and button_rect.collidepoint(mouse_pos) and self.enabled:
+            return True
+        else:
+            return False
+
 
 def main():
-    running = True
     #generate a brand new deck (only 1 deck for now)
     deck = build_deck()
     
+    shuffle(deck) # eventually we'll add a card shoe for multiple decks
+    screen.fill('green')
+    hit_button = Button('Hit', 10, 10, True)
+    stand_button = Button('Stand', 10, 40, True)
+    double_button = Button('Double', 10, 70, True)
+    pygame.display.flip()
+    #deal cards
+    player_hand = []
+    dealer_hand = []
+    player_hand.append(deck.pop())
+    dealer_hand.append(deck.pop())
+    player_hand.append(deck.pop())
+    dealer_hand.append(deck.pop())
+    display_hand(dealer_hand, player_hand, False)
+    new_press = True
+    
+    running = True
     # Main Loop
-    while running:
-        shuffle(deck) # eventually we'll add a card shoe for multiple decks
+    while running:              
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        screen.fill('green')
-        pygame.display.flip()
-        
-        #deal cards
-        player_hand = []
-        dealer_hand = []
-        player_hand.append(deck.pop())
-        dealer_hand.append(deck.pop())
-        player_hand.append(deck.pop())
-        dealer_hand.append(deck.pop())
-        display_hand(dealer_hand, player_hand, False)
-       
-        while True:
-            # show action buttons
-            draw_action_buttons()
-            # player's turn
-            # wait for them to click a button
-            # determine which button was clicked
-            # evaluate between each hit
-            # go until we bust, stand, or double
-            
-            # dealer's turn
-            # if < 17, hit until >= 17
-            # evaluate between each hit
-            ...
-        
-
-        time.sleep(20)
-        dt = clock.tick(60)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # check to see if we clicked a button
+                mouse_pos = event.pos
+                if hit_rect.collidepoint(mouse_pos):
+                    #hit me
+                    player_hand.append(deck.pop())
+                    display_hand(dealer_hand, player_hand, False)
+                if stand_rect.collidepoint(mouse_pos):
+                    #stand
+                    display_hand(dealer_hand, player_hand, True)
+                    break
+                if double_rect.collidepoint(mouse_pos):
+                    #double down
+                    player_hand.append(deck.pop())
+                    display_hand(dealer_hand, player_hand, True)
+                    break
+                
+                
+        clock.tick(fps)
 
     pygame.quit() 
     
@@ -127,9 +157,9 @@ def display_cards(hand, turn):
             elif card[1] == 'd':
                 suit = 'diamonds'
             
-            filename = 'Blackjack/assets/' + rank + '_of_' + suit + '.png' 
+            filename = 'assets/' + rank + '_of_' + suit + '.png' 
         else:
-            filename = 'Blackjack/assets/backside.png'
+            filename = 'assets/backside.png'
                        
         if player_hand:
             y_pos = 565
@@ -146,6 +176,9 @@ def display_cards(hand, turn):
         pygame.display.flip()
         
 def draw_action_buttons():
+    
+    
+    '''
     pygame.draw.rect(screen, 'gray', hit_rect, 200)
     pygame.draw.rect(screen, 'gray', stand_rect, 200)
     pygame.draw.rect(screen, 'gray', double_rect, 200)
@@ -153,6 +186,7 @@ def draw_action_buttons():
     screen.blit(stand_text_surface, stand_text_rec)
     screen.blit(double_text_surface, double_text_rec)
     pygame.display.flip()
+    '''
 
 def get_hand_value(hand):
     # gets the value of the hand passed
