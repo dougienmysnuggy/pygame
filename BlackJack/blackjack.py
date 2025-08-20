@@ -39,16 +39,6 @@ class Button:
         pygame.draw.rect(screen, 'black', button_rect, 2, 5)
         screen.blit(button_text, (self.x_pos + 3, self.y_pos + 3))
         
-    def check_click(self):
-        mouse_pos = pygame.mouse.get_pos()
-        left_click = pygame.mouse.get_pressed()[0]
-        button_rect = pygame.rect.Rect((self.x_pos, self.y_pos), (150, 25))
-        if left_click and button_rect.collidepoint(mouse_pos) and self.enabled:
-            return True
-        else:
-            return False
-
-
 def main():
     #generate a brand new deck (only 1 deck for now)
     deck = build_deck()
