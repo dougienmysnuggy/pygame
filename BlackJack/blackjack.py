@@ -1,3 +1,10 @@
+'''
+TODO:
+    fonts to show dealer/player, scores, and result of game
+    ability to start new game
+'''
+
+
 import pygame
 from random import shuffle
 import time
@@ -11,7 +18,6 @@ pygame.display.set_caption('Blackjack')
 BACKSIDE = 'backside'
 CARD_SCALE = 0.25
 
-
 hit_rect = pygame.Rect(10, 10, 150, 25)
 stand_rect = pygame.Rect(10, 40, 150, 25)
 double_rect = pygame.Rect(10, 70, 150, 25)
@@ -23,7 +29,6 @@ double_text_surface = font.render('Double', True, 'black')
 hit_text_rec = hit_text_surface.get_rect(center=hit_rect.center)
 stand_text_rec = stand_text_surface.get_rect(center=stand_rect.center)
 double_text_rec = double_text_surface.get_rect(center=double_rect.center)
-
 class Button:
     def __init__(self, text, x_pos, y_pos, enabled):
         self.text = text
@@ -44,10 +49,15 @@ def main():
     deck = build_deck()
     
     shuffle(deck) # eventually we'll add a card shoe for multiple decks
-    screen.fill('green')
+    screen.fill('dark green')
     hit_button = Button('Hit', 10, 10, True)
     stand_button = Button('Stand', 10, 40, True)
     double_button = Button('Double', 10, 70, True)
+    dealer_text_surface = font.render('DEALER', True, 'black')
+    dealer_text_rec = dealer_text_surface.get_rect()
+    player_text_surface = font.render('DEALER', True, 'black')
+    player_text_rec = player_text_surface.get_rect()
+    screen.blit(dealer_text_surface, (500, 200))
     pygame.display.flip()
     #deal cards
     player_hand = []
@@ -57,32 +67,64 @@ def main():
     player_hand.append(deck.pop())
     dealer_hand.append(deck.pop())
     display_hand(dealer_hand, player_hand, False)
-    new_press = True
-    
+
+    #show_score(get_hand_value(dealer_hand), 'dealer')
+    show_score(get_hand_value(player_hand), 'player')
+
     running = True
     # Main Loop
     while running:              
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONUP:
                 # check to see if we clicked a button
                 mouse_pos = event.pos
-                if hit_rect.collidepoint(mouse_pos):
-                    #hit me
-                    player_hand.append(deck.pop())
-                    display_hand(dealer_hand, player_hand, False)
-                if stand_rect.collidepoint(mouse_pos):
-                    #stand
-                    display_hand(dealer_hand, player_hand, True)
-                    break
-                if double_rect.collidepoint(mouse_pos):
-                    #double down
-                    player_hand.append(deck.pop())
-                    display_hand(dealer_hand, player_hand, True)
-                    break
-                
-                
+                while True:
+                    if hit_rect.collidepoint(mouse_pos):
+                        #hit me
+                        player_hand.append(deck.pop())
+                        display_hand(dealer_hand, player_hand, False)
+                    if stand_rect.collidepoint(mouse_pos):
+                        #stand
+                        display_hand(dealer_hand, player_hand, True)
+                        break
+                    if double_rect.collidepoint(mouse_pos):
+                        #double down
+                        player_hand.append(deck.pop())
+                        display_hand(dealer_hand, player_hand, True)
+                        break
+                    #lets see if we can continue
+                    if get_hand_value(player_hand) > 21:
+                        print('YOU BUSTED! GAME OVER')
+                        break
+                    elif get_hand_value(player_hand) == 21:
+                        # dealer's turn!
+                        break
+                show_score(get_hand_value(player_hand), 'player')
+
+                #now dealer needs to hit on <=16 and stand on >= 17
+                while True:
+                    if get_hand_value(dealer_hand) < 17:
+                        dealer_hand.append(deck.pop())
+                        display_hand(dealer_hand, player_hand, True)
+                    else:
+                        break
+                    if get_hand_value(dealer_hand) > 21:
+                        print('DEALER BUSTED! YOU WIN!')
+                        #money += bet * 2
+                        break
+                    if get_hand_value(player_hand) > get_hand_value(dealer_hand):
+                        print('YOU WIN!')
+                        #money += bet * 2
+                        break
+                    elif get_hand_value(player_hand) < get_hand_value(dealer_hand):
+                        print('DEALER WINS!')
+                        break
+                    else:
+                        print('PUSH! YOU GET YOUR BET BACK')
+                        #money += bet
+                        break
         clock.tick(fps)
 
     pygame.quit() 
@@ -165,19 +207,6 @@ def display_cards(hand, turn):
         screen.blit(card_img, image_rect)
         pygame.display.flip()
         
-def draw_action_buttons():
-    
-    
-    '''
-    pygame.draw.rect(screen, 'gray', hit_rect, 200)
-    pygame.draw.rect(screen, 'gray', stand_rect, 200)
-    pygame.draw.rect(screen, 'gray', double_rect, 200)
-    screen.blit(hit_text_surface, hit_text_rec)
-    screen.blit(stand_text_surface, stand_text_rec)
-    screen.blit(double_text_surface, double_text_rec)
-    pygame.display.flip()
-    '''
-
 def get_hand_value(hand):
     # gets the value of the hand passed
     
@@ -197,12 +226,23 @@ def get_hand_value(hand):
     value += aces
     
     for i in range(aces):
-        if value + 11 <= 21:
-            value += 11
+        if value + 10 <= 21:
+            value += 10
         else:
             value += 1
     
     return value    
-    
+
+def show_score(value, p):
+    if p == 'dealer':
+        y_pos = 200
+    else:
+        y_pos = 450
+
+    score_surface = font.render(str(value), True, 'black')
+    score_rect = score_surface.get_rect()
+    screen.blit(score_surface,(600, y_pos))
+    pygame.display.flip()
+
 if __name__ == '__main__':
     main()
